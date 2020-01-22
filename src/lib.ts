@@ -17,34 +17,29 @@ export function getX(time: number) {
 }
 
 export function getY(time: number, T: number[], hypothesis: 0 | 1) {
+  // K = T * T
+  let K = T.map(t => (t * t) % N);
+
   if (hypothesis == 0) {
-    const Y0: number[] = [];
-    for (let i = 0; i < T.length; i++) {
-      let K = (T[i] * T[i]) % N;
-      K = (K * K) % N;
-      Y0.push(hamming(K));
-    }
-    return Y0;
+    // Y0 = K * T
+    K = K.map(t => (t * t) % N);
   } else {
-    const Y1: number[] = [];
-    for (let i = 0; i < T.length; i++) {
-      let K = (T[i] * T[i]) % N;
-      K = (K * getMessages()[i]) % N;
-      Y1.push(hamming(K));
-    }
-    return Y1;
+    // Y1 = K * M
+    K = K.map((t, i) => (t * getMessages()[i]) % N);
   }
+
+  return K.map(k => hamming(k));
 }
 
 export function step(T: number[], bit: 0 | 1) {
-  return T.map((v) => (v * v) % N)
-    .map((v, i) => {
+  return T.map((t) => (t * t) % N)
+    .map((t, i) => {
       if (bit === 0) {
-        return v;
+        // Bit 0: only square
+        return t;
+      } else {
+        // Bit 1: square + mul
+        return (t *  getMessages()[i]) % N;
       }
-
-      return (v * getMessages()[i]) % N;
     });
 }
-
-// 1110111000001111000001
