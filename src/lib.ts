@@ -1,10 +1,5 @@
+import { N } from './constants';
 import { getCurves, getMessages } from './parser';
-
-export type Key = number;
-
-const N = 510471373;
-const squareFactor = 1;
-const mulFactor = 1.2;
 
 /**
  * Ge the Hamming weight of a given number (i.e. the number of ones in its binary representation).
@@ -27,7 +22,7 @@ export function getY(time: number, T: number[], hypothesis: 0 | 1) {
     for (let i = 0; i < T.length; i++) {
       let K = (T[i] * T[i]) % N;
       K = (K * K) % N;
-      Y0.push(squareFactor * squareFactor * hamming(K));
+      Y0.push(hamming(K));
     }
     return Y0;
   } else {
@@ -35,7 +30,7 @@ export function getY(time: number, T: number[], hypothesis: 0 | 1) {
     for (let i = 0; i < T.length; i++) {
       let K = (T[i] * T[i]) % N;
       K = (K * getMessages()[i]) % N;
-      Y1.push(squareFactor * mulFactor * hamming(K));
+      Y1.push(hamming(K));
     }
     return Y1;
   }
@@ -51,3 +46,5 @@ export function step(T: number[], bit: 0 | 1) {
       return (v * getMessages()[i]) % N;
     });
 }
+
+// 1110111000001111000001
