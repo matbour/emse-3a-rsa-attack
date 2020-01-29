@@ -16,7 +16,7 @@ export function getX(time: number) {
   return getCurves().map(curve => curve[time]);
 }
 
-export function getY(time: number, T: number[], hypothesis: 0 | 1) {
+export function getY(T: number[], hypothesis: 0 | 1) {
   // K = T * T
   let K = T.map(t => (t * t) % N);
 

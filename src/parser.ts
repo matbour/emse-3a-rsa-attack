@@ -1,5 +1,6 @@
-import { readdirSync, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import { samples } from './constants';
 
 const curvesDir = resolve(__dirname, '..', 'assets', 'curves');
 const messagesDir = resolve(__dirname, '..', 'assets', 'messages');
@@ -11,14 +12,18 @@ let messagesCache = null;
  */
 export function getCurves(): number[][] {
   if (curvesCache === null) {
-    curvesCache = readdirSync(curvesDir).map((file) => {
-      const path = resolve(curvesDir, file);
-      return readFileSync(path)
-        .toString()
-        .trim()
-        .split(' ')
-        .map(str => parseFloat(str));
-    });
+    curvesCache = [];
+
+    for (let i = 0; i < samples; i++) {
+      const path = resolve(curvesDir, `curve_${i}.txt`);
+      curvesCache.push(
+        readFileSync(path)
+          .toString()
+          .trim()
+          .split(' ')
+          .map(str => parseFloat(str)),
+      );
+    }
   }
 
   return curvesCache;
@@ -29,10 +34,12 @@ export function getCurves(): number[][] {
  */
 export function getMessages(): number[] {
   if (messagesCache === null) {
-    messagesCache = readdirSync(messagesDir).map((file) => {
-      const path = resolve(messagesDir, file);
-      return parseInt(readFileSync(path).toString());
-    });
+    messagesCache = [];
+
+    for (let i = 0; i < samples; i++) {
+      const path = resolve(messagesDir, `msg_${i}.txt`);
+      messagesCache.push(parseInt(readFileSync(path).toString()));
+    }
   }
 
   return messagesCache;

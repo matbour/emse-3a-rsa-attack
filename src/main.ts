@@ -1,39 +1,36 @@
 import { calc as corr } from 'node-correlation';
-import { expectedKey } from './constants';
-import { getX, getY, step } from './lib';
-import { getMessages } from './parser';
+import { d, expectedKey } from './constants';
+import { getX, getY, hamming, step } from './lib';
+import { getCurves, getMessages } from './parser';
 
 let key = '';
 let time = -1;
+let history: number[][] = [];
 let T = getMessages();
 let corr0;
 let corr1;
 let deltaCorr = [];
 
-while (time < 50) {
+while (time < 36) {
   const X = getX(time + 2);
-  const Y0 = getY(time + 2, T, 0);
-  const Y1 = getY(time + 2, T, 1);
-
-  console.log({
-    X: X.length,
-    Y0: Y0.length,
-    Y1: Y1.length,
-  });
+  const Y0 = getY(T, 0);
+  const Y1 = getY(T, 1);
 
   corr0 = Math.abs(corr(X, Y0));
   corr1 = Math.abs(corr(X, Y1));
+
+  // console.log({ corr0, corr1 });
 
   deltaCorr.push(Math.round(Math.abs(corr0 - corr1) * 1000) / 1000);
 
   if (corr0 > corr1) {
     // Hypothesis 0 is better, step time by 1
-    key = '0' + key;
+    key += '0';
     T = step(T, 0);
     time += 1;
   } else {
     // Hypothesis 1 is better, step time by 2
-    key = '1' + key;
+    key += '1';
     T = step(T, 1);
     time += 2;
   }
